@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כאן ועכשיו — לספרים</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Ccircle cx='17' cy='17' r='17' fill='%237b2d3f'/%3E%3Cg transform='translate(8,8)' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='4' cy='4' r='2.2'/%3E%3Ccircle cx='4' cy='14' r='2.2'/%3E%3Cline x1='16' y1='2' x2='6.2' y2='12.8'/%3E%3Cline x1='11.5' y1='10.8' x2='16' y2='15.5'/%3E%3Cline x1='6.2' y1='5.2' x2='9.5' y2='8.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5efe6; --panel:#fffdf9; --panel2:#ece1d3; --border:#e3d5c8;
+    --accent:#7b2d3f; --accent2:#9c3f52; --accent-light:#f3e2e6; --accent-dark:#5c1f2c;
+    --text:#2b1a1e; --muted:#6b5a54; --muted2:#9c8a80;
+    --green:#16a34a; --red:#c0392b; --amber:#7b2d3f; --star:#c9a227;
+    --radius-sm:12px; --radius:18px; --radius-lg:26px;
+    --shadow-sm:0 1px 2px rgba(60,25,30,.08);
+    --shadow-md:0 6px 20px -6px rgba(60,25,30,.16), 0 2px 8px -2px rgba(60,25,30,.08);
+    --shadow-lg:0 24px 60px -16px rgba(123,45,63,.28);
+    --ease:cubic-bezier(.22,1,.36,1);
+    --ease-spring:cubic-bezier(.34,1.56,.64,1);
+    --paper-bg: repeating-linear-gradient(90deg, rgba(123,45,63,.045) 0px, rgba(123,45,63,.045) 1px, transparent 1px, transparent 40px), var(--bg);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;font-family:'Rubik','Segoe UI',Arial,sans-serif;color:var(--text);
+    background:var(--paper-bg);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  .icon{width:1em;height:1em;vertical-align:-0.15em;display:inline-block;flex-shrink:0;}
+
+  header.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{width:34px;height:34px;flex-shrink:0;filter:drop-shadow(0 3px 8px rgba(123,45,63,.35));}
+  header.topbar .logo{font-weight:800;font-size:17px;color:var(--accent-dark);line-height:1.2;}
+  header.topbar .logo span{color:var(--muted);font-weight:400;font-size:11.5px;display:block;}
+  .conn-tag{font-size:10.5px;font-weight:700;padding:5px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;}
+  .conn-tag.live{background:rgba(22,163,74,.12);color:var(--green);}
+  .conn-tag.offline{background:rgba(192,57,43,.1);color:var(--red);}
+  .conn-tag .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .conn-tag.live .dot{animation:dotPulse 1.6s ease-in-out infinite;}
+  @keyframes dotPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+
+  main{max-width:480px;margin:0 auto;padding:16px;padding-bottom:60px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+  h1.section-title{font-size:14.5px;color:var(--muted);margin:20px 2px 12px;font-weight:700;letter-spacing:.2px;}
+  .btn{border:none;border-radius:var(--radius-sm);padding:11px 16px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .12s var(--ease-spring), box-shadow .2s var(--ease), background .2s var(--ease), opacity .2s;}
+  .btn:active{transform:scale(.96);}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 16px -4px rgba(123,45,63,.45);}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-outline{background:#fff;border:1px solid var(--border);color:var(--text);}
+  .btn-outline:hover{background:var(--panel2);}
+  .btn-red{background:rgba(192,57,43,.1);color:var(--red);}
+  .btn-red:hover{background:rgba(192,57,43,.16);}
+  .btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;box-shadow:0 6px 16px -4px rgba(22,163,74,.4);}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+  .btn-block{width:100%;}
+  .row{display:flex;align-items:center;justify-content:space-between;}
+
+  .ring-wrap{position:relative;width:150px;height:150px;margin:2px auto 8px;}
+  .ring-wrap svg{transform:rotate(-90deg);width:100%;height:100%;display:block;}
+  .ring-bg{stroke:var(--panel2);}
+  .ring-fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .9s linear, stroke .3s;}
+  .ring-fg.urgent{stroke:var(--red);}
+  .ring-fg.money{stroke:url(#moneyGrad);}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring-center .num{font-size:30px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.5px;}
+  .ring-center .lbl{font-size:11px;color:var(--muted);margin-top:3px;text-align:center;padding:0 10px;line-height:1.4;}
+
+  .status-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+  .dot.accent-dot{background:var(--accent);animation:dotPulse 1.4s ease-in-out infinite;}
+  .meta{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:14px;}
+  .divider{height:1px;background:var(--border);margin:14px 0;}
+
+  .toggle{position:relative;width:50px;height:28px;border-radius:999px;background:var(--panel2);border:1px solid var(--border);cursor:pointer;flex-shrink:0;transition:background .3s var(--ease-spring),border-color .3s;}
+  .toggle .knob{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(60,25,30,.25);transition:right .3s var(--ease-spring);}
+  .toggle.on{background:linear-gradient(135deg,var(--green),#15803d);border-color:transparent;}
+  .toggle.on .knob{right:24px;}
+
+  @keyframes reqPop{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+  .earnings-row{display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;color:var(--muted);border-bottom:1px dashed var(--border);}
+  .earnings-row:last-child{border-bottom:none;}
+  .earnings-row b{color:var(--text);}
+  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.6;}
+  .note a{color:var(--accent);font-weight:600;}
+  .footer-note{text-align:center;color:var(--muted);font-size:11.5px;padding:16px 0 4px;line-height:1.8;}
+  .footer-note a{color:var(--accent);font-weight:600;text-decoration:none;}
+
+
+  .earn-icon{width:34px;height:34px;border-radius:10px;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .earn-icon svg{width:18px;height:18px;}
+
+  /* skeleton */
+  .skeleton{background:linear-gradient(90deg,var(--panel2) 25%,#f3e6d8 37%,var(--panel2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:10px;}
+  @keyframes shimmer{0%{background-position:100% 0;}100%{background-position:-100% 0;}}
+  .sk-line{height:14px;margin-bottom:10px;}
+
+  /* ---------- SOS / style tags (mirrors customer.html) ---------- */
+  .specialty-tag{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-light);color:var(--accent-dark);margin:6px 4px 0 0;}
+  .urgent-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:rgba(192,57,43,.12);color:var(--red);}
+  .style-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--accent-light);color:var(--accent-dark);}
+
+  /* ---------- Live tracking + chat ---------- */
+  .enroute-pill{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--accent-dark);background:var(--accent-light);border-radius:999px;padding:8px 14px;margin-bottom:12px;}
+  .enroute-pill svg{width:16px;height:16px;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(43,26,30,.6);backdrop-filter:blur(4px);z-index:110;display:flex;align-items:flex-end;justify-content:center;}
+  .modal-sheet{position:relative;background:var(--panel);border-radius:26px 26px 0 0;padding:20px 18px;max-width:480px;width:100%;max-height:82vh;overflow-y:auto;box-shadow:0 -12px 40px rgba(43,26,30,.2);}
+  .modal-sheet h3{margin:0 0 4px;font-size:16px;}
+  .modal-sheet .sub{font-size:12.5px;color:var(--muted);margin:0 0 16px;line-height:1.5;}
+  .modal-close{position:absolute;left:16px;top:16px;width:30px;height:30px;border-radius:50%;background:var(--panel2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);}
+  .chat-badge{position:absolute;top:-6px;left:-6px;background:var(--red);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 0 0 2px #fff;}
+  .chat-log{display:flex;flex-direction:column;gap:8px;padding:10px 2px;max-height:340px;overflow-y:auto;}
+  .chat-msg{max-width:75%;padding:9px 13px;border-radius:16px;font-size:13.5px;line-height:1.4;}
+  .chat-msg.me{align-self:flex-start;background:var(--accent);color:#fff;border-bottom-right-radius:4px;}
+  .chat-msg.them{align-self:flex-end;background:var(--panel2);color:var(--text);border-bottom-left-radius:4px;}
+  .chat-empty{color:var(--muted);font-size:12.5px;text-align:center;padding:24px 0;}
+  .chat-input-row{display:flex;gap:8px;margin-top:10px;}
+  .chat-input-row input{flex:1;border:1px solid var(--border);border-radius:999px;padding:10px 14px;font-family:inherit;font-size:13.5px;background:#fff;color:var(--text);}
+  .chat-input-row input:focus{outline:none;border-color:var(--accent);}
+
+  /* ---------- Login / onboarding (mirrors customer.html) ---------- */
+  @keyframes scrimIn{from{opacity:0;}to{opacity:1;}}
+  .onboard-overlay{position:fixed;inset:0;background:var(--paper-bg);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:24px;padding-top:12vh;overflow-y:auto;animation:scrimIn .35s var(--ease);}
+  .onboard-card{padding:0;max-width:380px;width:100%;text-align:center;animation:cardPop .45s var(--ease-spring);}
+  @keyframes cardPop{from{opacity:0;transform:translateY(24px) scale(.94);}to{opacity:1;transform:translateY(0) scale(1);}}
+  .onboard-mark{width:68px;height:68px;margin:0 auto 16px;filter:drop-shadow(0 6px 16px rgba(123,45,63,.4));}
+  .onboard-card h2{font-size:20px;margin:0 0 10px;color:var(--text);}
+  .onboard-card p{color:var(--muted);font-size:13.5px;margin-bottom:18px;line-height:1.6;}
+  .login-input{width:100%;box-sizing:border-box;text-align:center;padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;font-weight:700;letter-spacing:1px;color:var(--text);margin-bottom:10px;direction:ltr;}
+  .login-input:focus{outline:none;border-color:var(--accent);}
+  .login-input.error{border-color:var(--red);}
+  .login-error{color:var(--red);font-size:12px;margin:-4px 0 12px;}
+  .login-demo-hint{background:var(--accent-light);color:var(--accent-dark);font-size:12.5px;font-weight:700;border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;line-height:1.6;}
+  .login-link{background:none;border:none;color:var(--accent);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;padding:10px 0 0;}
+  .check-badge{width:38px;height:38px;border-radius:50%;background:rgba(22,163,74,.14);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .check-badge svg{width:20px;height:20px;}
+
+  /* ---------- Barber profile setup / edit ---------- */
+  .profile-card{text-align:right;}
+  .field-label{font-size:12px;font-weight:700;color:var(--muted);margin:14px 0 6px;}
+  .field-label:first-of-type{margin-top:0;}
+  .profile-card .login-input{text-align:right;font-weight:500;letter-spacing:normal;direction:rtl;margin-bottom:0;}
+  .profile-card input[type="number"]{direction:ltr;text-align:right;}
+  .profile-card textarea.login-input{font-size:13.5px;font-weight:500;letter-spacing:normal;resize:vertical;min-height:60px;font-family:inherit;}
+  .field-row2{display:flex;gap:8px;}
+  .field-row2 .login-input{flex:1;}
+  .profile-photo-row{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+  .profile-photo-circle{width:72px;height:72px;border-radius:50%;background:var(--panel2) center/cover no-repeat;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted2);flex-shrink:0;}
+  .profile-photo-circle svg{width:28px;height:28px;}
+  .photo-upload-btn{background:var(--panel2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 14px;font-family:inherit;font-weight:700;font-size:12.5px;color:var(--text);cursor:pointer;}
+  .spec-chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .spec-chip{border:1.5px solid var(--border);background:var(--panel);border-radius:999px;padding:7px 13px;font-family:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s var(--ease);}
+  .spec-chip.active{border-color:var(--accent);color:var(--accent-dark);background:var(--accent-light);}
+  .gallery-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .gallery-thumb{position:relative;width:64px;height:64px;border-radius:12px;background:var(--panel2) center/cover no-repeat;border:1px solid var(--border);flex-shrink:0;}
+  .gallery-thumb .rm{position:absolute;top:-6px;left:-6px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;box-shadow:0 0 0 2px #fff;}
+  .gallery-add{width:64px;height:64px;border-radius:12px;background:var(--panel2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;flex-shrink:0;font-size:22px;}
+  .edit-pencil-btn{width:28px;height:28px;border-radius:50%;background:var(--panel2);border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0;}
+  .edit-pencil-btn svg{width:14px;height:14px;}
+  .profile-photo-circle svg{width:24px;height:24px;color:var(--muted2);}
+  .profile-photo-wrap{position:relative;flex-shrink:0;}
+  .photo-edit-badge{position:absolute;bottom:-3px;left:-3px;width:24px;height:24px;box-shadow:0 0 0 2px var(--panel);}
+  .photo-edit-badge svg{width:12px;height:12px;}
+
+  /* ---------- Earnings pill (moved out of the way, into the header row) ---------- */
+  .earn-pill{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--accent-light);color:var(--accent-dark);border-radius:14px;padding:6px 10px;flex-shrink:0;white-space:nowrap;}
+  .earn-pill-label{font-size:9px;font-weight:700;opacity:.75;}
+  .earn-pill-amount{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:800;}
+  .earn-pill-amount svg{width:12px;height:12px;}
+
+  /* ---------- Barber map — bleeds edge-to-edge out of main's padding, tall and dominant,
+     with the availability slider floating directly on top of it (not a separate card below) ---------- */
+  .bmap-wrap{position:relative;margin:0 -16px 14px;overflow:hidden;}
+  #bmap{height:48vh;min-height:260px;max-height:420px;background:#e8e0d2;}
+  .bmap-scrim{position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(to top, rgba(43,26,30,.42), rgba(43,26,30,0));pointer-events:none;}
+  /* Request status "pops" out of the map itself as a floating sheet, instead of sitting in a separate card below it */
+  .bmap-sheet{position:absolute;left:12px;right:12px;bottom:12px;max-height:62%;overflow-y:auto;background:rgba(255,253,249,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:var(--radius-lg);padding:16px;box-shadow:0 8px 28px -6px rgba(43,26,30,.4);animation:reqPop .4s var(--ease-spring);}
+  .bmap-sheet.urgent{box-shadow:0 8px 28px -6px rgba(192,57,43,.5), 0 0 0 2px var(--red);}
+
+  /* ---------- Swipe-to-toggle availability slider (floats over the map's scrim) ---------- */
+  .swipe-track{position:absolute;left:16px;right:16px;bottom:16px;height:56px;border-radius:999px;background:rgba(255,253,249,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.5);box-shadow:0 8px 24px -6px rgba(43,26,30,.4);display:flex;align-items:center;justify-content:center;user-select:none;touch-action:none;transition:background .25s var(--ease),border-color .25s var(--ease);}
+  .swipe-track.is-online{background:rgba(22,163,74,.85);border-color:rgba(255,255,255,.4);}
+  .swipe-label{font-size:13.5px;font-weight:700;color:var(--muted);pointer-events:none;}
+  .swipe-track.is-online .swipe-label{color:#fff;}
+  .swipe-thumb{position:absolute;top:3px;left:3px;width:50px;height:50px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.18);cursor:grab;}
+
+  /* ---------- Account drawer (menu button in header → slides in from the side; mirrors customer.html) ---------- */
+  .menu-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--panel2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0;}
+  .menu-btn svg{width:17px;height:17px;}
+  .header-actions{display:flex;align-items:center;gap:10px;}
+  .drawer-overlay{position:fixed;inset:0;background:rgba(43,26,30,.55);backdrop-filter:blur(2px);z-index:120;animation:scrimIn .25s var(--ease);}
+  .drawer-panel{position:fixed;top:0;right:0;bottom:0;width:86%;max-width:340px;background:var(--panel);box-shadow:-16px 0 40px rgba(43,26,30,.25);padding:20px 18px;overflow-y:auto;animation:drawerIn .3s var(--ease);}
+  @keyframes drawerIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+  .drawer-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .drawer-title{font-size:17px;font-weight:800;}
+  .drawer-close{width:30px;height:30px;border-radius:50%;background:var(--panel2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);padding:0;flex-shrink:0;}
+  .drawer-close svg{width:15px;height:15px;}
+  .menu-section-title{font-size:11.5px;font-weight:700;color:var(--muted);margin:18px 2px 8px;letter-spacing:.3px;}
+  .menu-section-title:first-of-type{margin-top:0;}
+  .drawer-list{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+  .drawer-row{display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;border-bottom:1px solid var(--border);padding:14px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--text);cursor:pointer;text-align:right;}
+  .drawer-row:last-child{border-bottom:none;}
+  .drawer-row svg{width:18px;height:18px;color:var(--accent-dark);flex-shrink:0;}
+  .drawer-row .chev{margin-inline-start:auto;color:var(--muted2);width:14px;height:14px;}
+  .drawer-row-value{font-size:12px;color:var(--muted);font-weight:600;}
+  .drawer-select{width:100%;padding:14px;border:none;background:none;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--text);cursor:pointer;}
+  .menu-profile-row{display:flex;align-items:center;gap:12px;margin-bottom:4px;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 34 34"><circle cx="17" cy="17" r="17" fill="#7b2d3f"/><g transform="translate(8,8)" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="4" r="2.2"/><circle cx="4" cy="14" r="2.2"/><line x1="16" y1="2" x2="6.2" y2="12.8"/><line x1="11.5" y1="10.8" x2="16" y2="15.5"/><line x1="6.2" y1="5.2" x2="9.5" y2="8.5"/></g></svg>
+    <div class="logo">כאן ועכשיו<span>לוח בקרה לספרים</span></div>
+  </div>
+  <div class="header-actions">
+    <div id="connTag" class="conn-tag offline"><span class="dot"></span>מתחבר…</div>
+    <button class="menu-btn" onclick="openMenu()" aria-label="פרטים, תשלומים והגדרות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <div id="dynamicArea"></div>
+</main>
+<div id="modalArea"></div>
+
+<div class="footer-note">מחובר בזמן אמת לאפליקציית הלקוחות (Firebase) — פועל בין מכשירים אמיתיים, לא רק לשוניות באותו דפדפן.<br>אתה לקוח? <a href="customer.html">עבור לאפליקציית הלקוחות ←</a></div>
+
+<!-- Firebase (compat build — works with plain script tags, no build step) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+<script>
+/* =========================================================================
+   FIREBASE SETUP — paste the EXACT SAME config you used in customer.html.
+   Both files must point at the same Firebase project or they won't see
+   each other's data.
+   ========================================================================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyADWLkVrwJx8AnmdUHmjlo2hHEfd5xzTxw",
+  authDomain: "barbernow-6fc53.firebaseapp.com",
+  databaseURL: "https://barbernow-6fc53-default-rtdb.firebaseio.com",
+  projectId: "barbernow-6fc53",
+  storageBucket: "barbernow-6fc53.firebasestorage.app",
+  messagingSenderId: "419518440709",
+  appId: "1:419518440709:web:d50cf1160f62021e05436c"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const ICONS = {
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  wallet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>`,
+  bolt: `<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  wand: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M3 21l9-9M12.2 6.2L11 5"/></svg>`,
+  phone: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+  chat: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  send: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+  close: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  nav: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>`,
+  pencil: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>`,
+  camera: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  chev: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
+  info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  sliders: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,
+};
+
+const LOGO_MARK = `<svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg"><circle cx="17" cy="17" r="17" fill="#7b2d3f"/><g transform="translate(8,8)" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="4" r="2.2"/><circle cx="4" cy="14" r="2.2"/><line x1="16" y1="2" x2="6.2" y2="12.8"/><line x1="11.5" y1="10.8" x2="16" y2="15.5"/><line x1="6.2" y1="5.2" x2="9.5" y2="8.5"/></g></svg>`;
+const GOOGLE_G = `<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#fff;flex-shrink:0"><span style="background:linear-gradient(135deg,#4285F4,#EA4335 35%,#FBBC05 65%,#34A853);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;font-size:14px;font-family:Arial,sans-serif">G</span></span>`;
+
+const LOCAL_KEYS = { MY_BARBER:'ta24_my_barber_id', LOGIN_PHONE:'ta24_barber_phone_verified', BARBER_NAME:'ta24_barber_name', BARBER_EMAIL:'ta24_barber_email', BARBER_SHOP:'ta24_barber_shop', PROFILE_DONE:'ta24_barber_profile_done' };
+
+if(new URLSearchParams(location.search).get('reset')==='1'){
+  localStorage.removeItem(LOCAL_KEYS.LOGIN_PHONE);
+  localStorage.removeItem(LOCAL_KEYS.BARBER_NAME);
+  localStorage.removeItem(LOCAL_KEYS.BARBER_EMAIL);
+  localStorage.removeItem(LOCAL_KEYS.BARBER_SHOP);
+  localStorage.removeItem(LOCAL_KEYS.PROFILE_DONE);
+  history.replaceState(null,'',location.pathname);
+}
+
+/* ---------- Login (visual demo — mirrors customer.html's flow, no real backend auth) ---------- */
+let loginStep = 'welcome';
+let loginPhoneError = false;
+let loginCodeError = false;
+let loginGeneratedCode = null;
+let emailCodeError = false;
+let googleEmailError = false;
+let pendingSignup = null;
+const DEMO_BARBER_PHONE = '054-1234567';
+
+function isLoggedIn(){ return !!localStorage.getItem(LOCAL_KEYS.LOGIN_PHONE); }
+function normalizePhone(v){ return (v||'').replace(/[^\d]/g,''); }
+function genCode(){ return String(Math.floor(1000+Math.random()*9000)); }
+
+function submitPhone(){
+  const raw = document.getElementById('loginPhoneInput').value;
+  const digits = normalizePhone(raw);
+  if(!/^05\d{8}$/.test(digits)){ loginPhoneError = true; render(); return; }
+  loginPhoneError = false;
+  localStorage.setItem('ta24_barber_pending_phone', digits);
+  loginGeneratedCode = genCode();
+  loginCodeError = false;
+  loginStep = 'code';
+  render();
+}
+function verifyCode(){
+  const entered = normalizePhone(document.getElementById('loginCodeInput').value);
+  if(entered !== loginGeneratedCode){ loginCodeError = true; render(); return; }
+  const phone = localStorage.getItem('ta24_barber_pending_phone') || DEMO_BARBER_PHONE;
+  localStorage.setItem(LOCAL_KEYS.LOGIN_PHONE, phone);
+  loginGeneratedCode = null;
+  loginCodeError = false;
+  render();
+}
+function resendCode(){ loginGeneratedCode = genCode(); loginCodeError = false; render(); }
+function changePhoneNumber(){ loginStep = 'phone'; loginGeneratedCode = null; loginCodeError = false; render(); }
+function goToWelcomeStep(){
+  loginStep = 'welcome';
+  loginPhoneError = false;
+  emailCodeError = false;
+  pendingSignup = null;
+  render();
+}
+function goToPhoneStep(){ loginStep = 'phone'; loginPhoneError = false; render(); }
+function goToGoogleStep(){ loginStep = 'google'; googleEmailError = false; render(); }
+function showGoogleEmailError(msg){
+  googleEmailError = msg;
+  const el = document.getElementById('googleEmailErrorMsg');
+  if(el){ el.textContent = msg; el.style.display = msg ? '' : 'none'; }
+}
+function submitGoogleEmail(){
+  const email = document.getElementById('googleEmailInput').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showGoogleEmailError('כתובת Gmail לא תקינה'); return; }
+  showGoogleEmailError('');
+  pendingSignup = { email };
+  loginGeneratedCode = genCode();
+  emailCodeError = false;
+  loginStep = 'emailCode';
+  render();
+}
+function verifyEmailCode(){
+  const entered = normalizePhone(document.getElementById('emailCodeInput').value);
+  if(entered !== loginGeneratedCode){ emailCodeError = true; render(); return; }
+  if(pendingSignup && pendingSignup.email) localStorage.setItem(LOCAL_KEYS.BARBER_EMAIL, pendingSignup.email);
+  localStorage.setItem(LOCAL_KEYS.LOGIN_PHONE, normalizePhone(DEMO_BARBER_PHONE));
+  loginStep = 'success';
+  render();
+}
+function resendEmailCode(){ loginGeneratedCode = genCode(); emailCodeError = false; render(); }
+function proceedAfterSuccess(){ loginStep = 'welcome'; pendingSignup = null; render(); }
+
+function renderLogin(){
+  if(loginStep==='success'){
+    return `<div class="onboard-overlay"><div class="onboard-card">
+      <div class="check-badge" style="width:60px;height:60px;margin:0 auto 16px">${ICONS.check}</div>
+      <h2>ברוך הבא, ${pendingSignup?pendingSignup.first:''}!</h2>
+      <p>חשבון הספר שלך נוצר בהצלחה. בוא/י נמשיך לכמה פרטים נוספים אחרונים, ואז אפשר להתחיל לקבל בקשות מלקוחות.</p>
+      <button class="btn btn-primary btn-block" onclick="proceedAfterSuccess()">המשך</button>
+    </div></div>`;
+  }
+  if(loginStep==='emailCode'){
+    return `<div class="onboard-overlay"><div class="onboard-card">
+      <div class="onboard-mark">${LOGO_MARK}</div>
+      <h2>הזן/י את קוד האימות</h2>
+      <p>שלחנו קוד בן 4 ספרות ל-${pendingSignup?pendingSignup.email:''}</p>
+      <div class="login-demo-hint">מצב הדגמה — אין שליחת מייל אמיתית עדיין. הקוד שלך הוא: <b>${loginGeneratedCode}</b></div>
+      <input id="emailCodeInput" class="login-input ${emailCodeError?'error':''}" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autofocus>
+      ${emailCodeError?'<div class="login-error">קוד שגוי, נסה/י שוב</div>':''}
+      <button class="btn btn-primary btn-block" onclick="verifyEmailCode()">אמת/י</button>
+      <button class="login-link" onclick="resendEmailCode()">שלח/י קוד שוב</button><br>
+      <button class="login-link" onclick="goToWelcomeStep()">ביטול</button>
+    </div></div>`;
+  }
+  if(loginStep==='google'){
+    return `<div class="onboard-overlay"><div class="onboard-card">
+      <div class="onboard-mark">${LOGO_MARK}</div>
+      <h2>התחברות עם Google</h2>
+      <p>הזן/י את כתובת ה-Gmail שלך ונשלח קוד אימות</p>
+      <input id="googleEmailInput" class="login-input ${googleEmailError?'error':''}" style="text-align:right;font-weight:500;letter-spacing:normal;direction:ltr" type="email" placeholder="you@gmail.com" autofocus>
+      <div id="googleEmailErrorMsg" class="login-error" style="${googleEmailError?'':'display:none'}">${googleEmailError||''}</div>
+      <button class="btn btn-primary btn-block" onclick="submitGoogleEmail()">שלח/י קוד אימות</button>
+      <div class="login-demo-hint">מצב הדגמה — אין חיבור אמיתי לחשבון Google, זו רק דוגמה איך זה ייראה.</div>
+      <button class="login-link" onclick="goToWelcomeStep()">חזרה</button>
+    </div></div>`;
+  }
+  if(loginStep==='code'){
+    return `<div class="onboard-overlay"><div class="onboard-card">
+      <div class="onboard-mark">${LOGO_MARK}</div>
+      <h2>הזן/י את קוד האימות</h2>
+      <p>שלחנו קוד בן 4 ספרות למספר שהזנת</p>
+      <div class="login-demo-hint">מצב הדגמה — אין שליחת SMS אמיתית עדיין. הקוד שלך הוא: <b>${loginGeneratedCode}</b></div>
+      <input id="loginCodeInput" class="login-input ${loginCodeError?'error':''}" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autofocus>
+      ${loginCodeError?'<div class="login-error">קוד שגוי, נסה/י שוב</div>':''}
+      <button class="btn btn-primary btn-block" onclick="verifyCode()">אמת/י</button>
+      <button class="login-link" onclick="resendCode()">שלח/י קוד שוב</button><br>
+      <button class="login-link" onclick="changePhoneNumber()">מספר אחר</button>
+    </div></div>`;
+  }
+  if(loginStep==='phone'){
+    return `<div class="onboard-overlay"><div class="onboard-card">
+      <div class="onboard-mark">${LOGO_MARK}</div>
+      <h2>ברוך הבא לכאן ועכשיו</h2>
+      <p>כדי להתחיל, הזן/י את מספר הטלפון שלך ונשלח קוד אימות</p>
+      <input id="loginPhoneInput" class="login-input ${loginPhoneError?'error':''}" type="tel" inputmode="numeric" placeholder="05X-XXXXXXX" autofocus>
+      ${loginPhoneError?'<div class="login-error">מספר טלפון לא תקין</div>':''}
+      <button class="btn btn-primary btn-block" onclick="submitPhone()">שלח/י קוד אימות</button>
+      <button class="login-link" onclick="goToWelcomeStep()">חזרה</button>
+    </div></div>`;
+  }
+  return `<div class="onboard-overlay"><div class="onboard-card">
+    <div class="onboard-mark">${LOGO_MARK}</div>
+    <h2>ברוך הבא לכאן ועכשיו</h2>
+    <p>לוח הבקרה לספרים — קבל/י בקשות מלקוחות בזמן אמת, נהל/י את היום שלך והרווחים שלך.</p>
+    <button class="btn btn-primary btn-block" style="font-size:15px;padding:16px;display:flex;align-items:center;justify-content:center;gap:10px" onclick="goToGoogleStep()">${GOOGLE_G} התחבר עם Google</button>
+    <button class="login-link" style="padding-top:14px" onclick="goToPhoneStep()">המשך עם מספר טלפון (הדגמה)</button>
+  </div></div>`;
+}
+
+/* ---------- Barber profile setup / edit (name, shop, location, experience, price, specialties, photos) ---------- */
+let editingProfile = false;
+let profileError = '';
+let profilePhotoDraft = undefined; // undefined = unchanged, null = removed, string = new data URL
+let profileGalleryDraft = null; // null = unchanged (use existing), array = edited set
+let profileSpecialtiesDraft = null; // null = unchanged (use existing), Set = edited set
+
+function isProfileDone(){ return !!localStorage.getItem(LOCAL_KEYS.PROFILE_DONE); }
+function startEditProfile(){
+  editingProfile = true;
+  profileError = '';
+  profilePhotoDraft = undefined;
+  profileGalleryDraft = null;
+  profileSpecialtiesDraft = null;
+  render();
+}
+function cancelEditProfile(){
+  editingProfile = false;
+  render();
+}
+function handleProfilePhotoUpload(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    profilePhotoDraft = e.target.result;
+    const preview = document.getElementById('profilePhotoPreview');
+    if(preview){ preview.style.backgroundImage = `url('${profilePhotoDraft}')`; preview.innerHTML = ''; }
+  };
+  reader.readAsDataURL(file);
+}
+function removeProfilePhoto(){
+  profilePhotoDraft = null;
+  const preview = document.getElementById('profilePhotoPreview');
+  if(preview){ preview.style.backgroundImage = 'none'; preview.innerHTML = ICONS.user; }
+}
+function currentProfileGallery(){
+  if(profileGalleryDraft) return profileGalleryDraft;
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = barbersCache[barberId] || {};
+  return me.gallery || [];
+}
+function renderGalleryRow(){
+  const row = document.getElementById('profileGalleryRow');
+  if(!row) return;
+  const imgs = currentProfileGallery();
+  row.innerHTML = imgs.map((src,i)=>`<div class="gallery-thumb" style="background-image:url('${src}')"><span class="rm" onclick="removeGalleryPhoto(${i})">${ICONS.close}</span></div>`).join('')
+    + (imgs.length<4 ? `<label class="gallery-add">+<input type="file" accept="image/*" style="display:none" onchange="handleProfileGalleryUpload(this)"></label>` : '');
+}
+function handleProfileGalleryUpload(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    profileGalleryDraft = [...currentProfileGallery(), e.target.result];
+    renderGalleryRow();
+  };
+  reader.readAsDataURL(file);
+}
+function removeGalleryPhoto(idx){
+  profileGalleryDraft = currentProfileGallery().filter((_,i)=>i!==idx);
+  renderGalleryRow();
+}
+function currentProfileSpecialties(){
+  if(profileSpecialtiesDraft) return profileSpecialtiesDraft;
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = barbersCache[barberId] || {};
+  return new Set(me.specialties || []);
+}
+function toggleProfileSpecialty(label, btnEl){
+  const set = new Set(currentProfileSpecialties());
+  if(set.has(label)) set.delete(label); else set.add(label);
+  profileSpecialtiesDraft = set;
+  btnEl.classList.toggle('active', set.has(label));
+}
+function showProfileError(msg){
+  profileError = msg;
+  const el = document.getElementById('profileErrorMsg');
+  if(el){ el.textContent = msg; el.style.display = msg ? '' : 'none'; }
+}
+function saveProfile(){
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = barbersCache[barberId] || {};
+  const isFirstTimeSetup = !isProfileDone();
+  const first = document.getElementById('profileFirstNameInput').value.trim();
+  const last = document.getElementById('profileLastNameInput').value.trim();
+  const shop = document.getElementById('profileShopInput').value.trim();
+  const address = document.getElementById('profileAddressInput').value.trim();
+  const price = +document.getElementById('profilePriceInput').value;
+  const experienceYears = document.getElementById('profileExperienceInput').value.trim();
+  const phone = document.getElementById('profilePhoneInput').value.trim();
+  const bio = document.getElementById('profileBioInput').value.trim();
+  if(!first || !last){ showProfileError('נא להזין שם פרטי ושם משפחה'); return; }
+  if(!shop){ showProfileError('נא להזין שם עסק / מספרה'); return; }
+  if(!address){ showProfileError('נא להזין כתובת מספרה'); return; }
+  if(!price || price<=0){ showProfileError('נא להזין מחיר תספורת תקין'); return; }
+  showProfileError('');
+  const fullName = [first, last].filter(Boolean).join(' ');
+  const updates = {
+    name: fullName, address, price, phone,
+    shopName: shop, experienceYears, bio,
+    specialties: Array.from(currentProfileSpecialties()),
+    gallery: currentProfileGallery(),
+  };
+  if(profilePhotoDraft !== undefined) updates.photo = profilePhotoDraft;
+  // A barber should never appear available to customers before they've actively swiped
+  // to go online — force offline on first-ever setup only, not on later profile edits
+  // (which would otherwise silently knock an already-online barber offline mid-shift).
+  if(isFirstTimeSetup) updates.isOnline = false;
+  db.ref('barbers/'+barberId).update(updates);
+  localStorage.setItem(LOCAL_KEYS.BARBER_NAME, fullName);
+  localStorage.setItem(LOCAL_KEYS.BARBER_SHOP, shop);
+  localStorage.setItem(LOCAL_KEYS.PROFILE_DONE, '1');
+  editingProfile = false;
+  render();
+}
+function renderProfileSetup(){
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = barbersCache[barberId] || {};
+  const savedFirst = (localStorage.getItem(LOCAL_KEYS.BARBER_NAME)||'').split(' ')[0] || '';
+  const savedLast = (localStorage.getItem(LOCAL_KEYS.BARBER_NAME)||'').split(' ').slice(1).join(' ') || '';
+  const [first, last] = me.name ? me.name.split(' ') : [savedFirst, savedLast];
+  const lastRest = me.name ? me.name.split(' ').slice(1).join(' ') : savedLast;
+  const shop = me.shopName || localStorage.getItem(LOCAL_KEYS.BARBER_SHOP) || '';
+  const photo = profilePhotoDraft !== undefined ? profilePhotoDraft : me.photo;
+  const currentSpecs = currentProfileSpecialties();
+  return `<div class="onboard-overlay"><div class="onboard-card" style="max-width:440px;text-align:right">
+    <div style="text-align:center">
+      <div class="onboard-mark">${LOGO_MARK}</div>
+      <h2>${editingProfile && isProfileDone() ? 'עריכת הפרופיל שלך' : 'בואו נכיר את המספרה שלך'}</h2>
+      <p>ככה הלקוחות יראו אותך — כמה פרטים ואפשר להתחיל לקבל בקשות.</p>
+    </div>
+    <div class="profile-card">
+      <div class="field-label">תמונת פרופיל</div>
+      <div class="profile-photo-row">
+        <div class="profile-photo-circle" id="profilePhotoPreview" style="${photo?`background-image:url('${photo}')`:''}">${photo?'':ICONS.user}</div>
+        <label class="photo-upload-btn">${ICONS.camera} בחר/י תמונה<input type="file" accept="image/*" style="display:none" onchange="handleProfilePhotoUpload(this)"></label>
+        ${photo?`<button class="login-link" style="padding:0" onclick="removeProfilePhoto()">הסרה</button>`:''}
+      </div>
+      <div class="field-label">שם פרטי ומשפחה</div>
+      <div class="field-row2">
+        <input id="profileFirstNameInput" class="login-input" type="text" placeholder="שם פרטי" value="${escapeHtml(first||'')}">
+        <input id="profileLastNameInput" class="login-input" type="text" placeholder="שם משפחה" value="${escapeHtml(lastRest||'')}">
+      </div>
+      <div class="field-label">שם העסק / המספרה</div>
+      <input id="profileShopInput" class="login-input" type="text" placeholder="לדוגמה: מספרת מוטי" value="${escapeHtml(shop)}">
+      <div class="field-label">כתובת המספרה</div>
+      <input id="profileAddressInput" class="login-input" type="text" placeholder="רחוב, מספר, עיר" value="${escapeHtml(me.address||'')}">
+      <div class="field-row2">
+        <div style="flex:1">
+          <div class="field-label">מחיר תספורת (₪)</div>
+          <input id="profilePriceInput" class="login-input" type="number" inputmode="numeric" min="1" placeholder="60" value="${me.price||''}">
+        </div>
+        <div style="flex:1">
+          <div class="field-label">ותק בתחום (שנים)</div>
+          <input id="profileExperienceInput" class="login-input" type="number" inputmode="numeric" min="0" max="80" placeholder="5" value="${escapeHtml(me.experienceYears||'')}">
+        </div>
+      </div>
+      <div class="field-label">טלפון עסקי</div>
+      <input id="profilePhoneInput" class="login-input" type="tel" inputmode="numeric" placeholder="05X-XXXXXXX" value="${escapeHtml(me.phone||'')}">
+      <div class="field-label">תיאור קצר</div>
+      <textarea id="profileBioInput" class="login-input" rows="3" placeholder="כמה מילים עליך ועל המספרה...">${escapeHtml(me.bio||'')}</textarea>
+      <div class="field-label">התמחויות</div>
+      <div class="spec-chips">${STYLE_OPTIONS.map(s=>`<button type="button" class="spec-chip ${currentSpecs.has(s.label)?'active':''}" onclick="toggleProfileSpecialty('${s.label}', this)">${s.label}</button>`).join('')}</div>
+      <div class="field-label">תמונות מהמספרה</div>
+      <div class="gallery-row" id="profileGalleryRow"></div>
+      <div id="profileErrorMsg" class="login-error" style="text-align:center;margin-top:14px;${profileError?'':'display:none'}">${profileError||''}</div>
+      <button class="btn btn-primary btn-block" style="margin-top:18px" onclick="saveProfile()">${editingProfile && isProfileDone() ? 'שמירת שינויים' : 'שמירה והמשך ללוח הבקרה'}</button>
+      ${isProfileDone() ? `<button class="login-link" style="display:block;margin:10px auto 0" onclick="cancelEditProfile()">ביטול</button>` : ''}
+    </div>
+  </div></div>`;
+}
+const CONFIRM_WINDOW_SEC = 15*60;
+const ARRIVAL_WINDOW_SEC = 15*60;
+const COMMISSION_RATE = 0.10;
+const SOS_SURCHARGE = 20;
+const STYLE_OPTIONS = [
+  {id:'taper', label:'טייפר'},
+  {id:'mullet', label:'מולט'},
+  {id:'buzz', label:'באז קאט'},
+  {id:'fade', label:'פייד / מדורג'},
+  {id:'long', label:'שיער ארוך (גזירות)'},
+  {id:'halacha', label:'תספורת מסגרת (לפי ההלכה)'},
+  {id:'kids', label:'תספורת ילדים עד גיל 12'},
+  {id:'mohawk', label:'מוהיקן'},
+];
+
+/* ---------- Account drawer (details / payments / settings) ---------- */
+let menuOpen = false;
+function openMenu(){ menuOpen = true; render(); }
+function closeMenu(){ menuOpen = false; render(); }
+function renderMenuModal(){
+  if(!menuOpen) return '';
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = barbersCache[barberId] || {};
+  return `<div class="drawer-overlay" onclick="if(event.target===this) closeMenu()">
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <div class="drawer-title">החשבון שלי</div>
+        <button class="drawer-close" onclick="closeMenu()">${ICONS.close}</button>
+      </div>
+      <div class="menu-profile-row">
+        <div class="profile-photo-wrap">
+          <div class="profile-photo-circle" style="width:46px;height:46px">${me.photo?`<img src="${me.photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`:ICONS.user}</div>
+          <button class="edit-pencil-btn photo-edit-badge" onclick="closeMenu(); startEditProfile();" title="עריכת פרופיל">${ICONS.pencil}</button>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:15px">${me.name||''}</div>
+          <div class="menu-profile-sub" style="font-size:12px;color:var(--muted);margin-top:2px">${me.shopName?me.shopName+' · ':''}${me.address||''}</div>
+        </div>
+      </div>
+
+      <div class="menu-section-title">פרטים</div>
+      <div class="drawer-list">
+        <div class="drawer-row" style="cursor:default">${ICONS.wand}<span style="flex:1">התמחויות</span><span class="drawer-row-value">${(me.specialties||[]).join(', ')||'—'}</span></div>
+        <div class="drawer-row" style="cursor:default">${ICONS.info}<span style="flex:1">ותק</span><span class="drawer-row-value">${me.experienceYears?me.experienceYears+' שנים':'—'}</span></div>
+        <button class="drawer-row" onclick="closeMenu(); startEditProfile();">${ICONS.pencil}<span style="flex:1">עריכת פרטים</span><span class="chev">${ICONS.chev}</span></button>
+      </div>
+      ${(me.gallery||[]).length ? `<div class="gallery-row" style="margin-top:10px">${me.gallery.map(src=>`<div class="gallery-thumb" style="background-image:url('${src}')"></div>`).join('')}</div>` : ''}
+
+      <div class="menu-section-title">תשלומים</div>
+      <div class="drawer-list">
+        <div class="drawer-row" style="cursor:default">${ICONS.wallet}<span style="flex:1">הכנסות היום</span><span class="drawer-row-value">₪${me.earningsToday||0}</span></div>
+        <div class="drawer-row" style="cursor:default">${ICONS.info}<span style="flex:1">עמלת פלטפורמה</span><span class="drawer-row-value">10%</span></div>
+        <div class="drawer-row" style="cursor:default">${ICONS.info}<span style="flex:1">חיוב איחור ללקוח שלא הגיע</span><span class="drawer-row-value">מחיר מלא</span></div>
+      </div>
+
+      <div class="menu-section-title">הגדרות</div>
+      <div class="drawer-list">
+        <div class="drawer-row" style="cursor:default">${ICONS.sliders}<select class="drawer-select" id="simSelect" onchange="setMyBarber(this.value)"></select></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- Live chat + tracking state ---------- */
+let chatOpen = false;
+let chatMessagesCache = {};
+let chatListenerReqId = null;
+let chatLastSeenTs = 0;
+const RISHON_CENTER = {lat:31.9730, lng:34.7925};
+const DEFAULT_CUSTOMER_POS = RISHON_CENTER; // stand-in for a request's real location — customer.html doesn't send real geolocation with a request yet
+
+/* ---------- Live map (barber's own location + incoming/active request markers) ---------- */
+let bmap = null;
+let bMeMarker = null;
+let bReqMarkers = [];
+let bReqInfoWindow = null;
+let gmapsReady = false;
+function onGMapsLoaded(){ gmapsReady = true; ensureBarberMap(); }
+function ensureBarberMap(){
+  const el = document.getElementById('bmap');
+  if(!el || !gmapsReady) return;
+  // The dashboard HTML (including #bmap) only gets rebuilt when something relevant
+  // changes, but when it does, it's a brand-new DOM node — a map bound to the old
+  // (now-detached) node would leave the new element blank. Recreating here is cheap
+  // since this only runs on real signature changes, not every tick.
+  bmap = new google.maps.Map(el, {
+    center: RISHON_CENTER, zoom: 13, disableDefaultUI: true, zoomControl: true,
+    styles: [{featureType:'poi.business',stylers:[{visibility:'off'}]},{featureType:'transit',stylers:[{visibility:'off'}]}]
+  });
+  bMeMarker = null;
+  renderBarberMapMarkers();
+}
+function renderBarberMapMarkers(){
+  if(!bmap) return;
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = barbersCache[barberId];
+  if(me && me.lat && me.lng){
+    const pos = {lat:me.lat, lng:me.lng};
+    if(!bMeMarker){
+      bMeMarker = new google.maps.Marker({
+        position: pos, map: bmap, title: 'המיקום שלך',
+        icon: {path: google.maps.SymbolPath.CIRCLE, scale:8, fillColor:'#16a34a', fillOpacity:1, strokeColor:'#fff', strokeWeight:2}
+      });
+    } else {
+      bMeMarker.setPosition(pos);
+    }
+    bmap.setCenter(pos);
+  }
+  bReqMarkers.forEach(m=>m.setMap(null));
+  bReqMarkers = [];
+  if(!me) return;
+  if(!bReqInfoWindow) bReqInfoWindow = new google.maps.InfoWindow();
+  const kinds = [
+    {req: myPendingRequest(me.id), kind:'pending'},
+    {req: myConfirmedRequest(me.id), kind:'confirmed'},
+    {req: myAcceptedRequest(me.id), kind:'accepted'},
+  ].filter(x=>x.req);
+  kinds.forEach(({req,kind})=>{
+    const marker = new google.maps.Marker({
+      position: DEFAULT_CUSTOMER_POS, map: bmap, title: 'בקשה מלקוח',
+      icon: {path: google.maps.SymbolPath.CIRCLE, scale:9, fillColor:'#7b2d3f', fillOpacity:1, strokeColor:'#fff', strokeWeight:2}
+    });
+    marker.addListener('click', () => {
+      bReqInfoWindow.setContent(requestInfoWindowHtml(req, kind, me));
+      bReqInfoWindow.open(bmap, marker);
+    });
+    bReqMarkers.push(marker);
+  });
+}
+function closeReqInfoWindow(){ if(bReqInfoWindow) bReqInfoWindow.close(); }
+function requestInfoWindowHtml(req, kind, me){
+  const styleLabel = req.stylePreference ? ((STYLE_OPTIONS.find(s=>s.id===req.stylePreference)||{}).label||'') : '';
+  let statusLine = '';
+  if(kind==='confirmed') statusLine = `<div style="color:#6b5a54;font-size:12px;margin-top:6px">אישרת — מחכה שהלקוח יבחר</div>`;
+  if(kind==='accepted') statusLine = `<div style="color:#16a34a;font-size:12px;margin-top:6px;font-weight:700">התקבל — בדרך אליו</div>`;
+  const actions = kind==='pending' ? `<div style="display:flex;gap:6px;margin-top:8px">
+      <button onclick="acceptRequest('${req.id}','${me.id}');closeReqInfoWindow();" style="flex:1;background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px;font-weight:700;font-family:inherit;cursor:pointer">אשר</button>
+      <button onclick="declineRequest('${req.id}','${me.id}');closeReqInfoWindow();" style="flex:1;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:8px;font-weight:700;font-family:inherit;cursor:pointer">דחה</button>
+    </div>` : '';
+  return `<div style="font-family:Rubik,Arial,sans-serif;direction:rtl;min-width:170px;text-align:right">
+    <div style="font-weight:800;font-size:13.5px;margin-bottom:4px">בקשה מלקוח</div>
+    <div style="font-size:12.5px;color:#2b1a1e">${styleLabel?styleLabel+' · ':''}₪${me.price}${req.custAge?' · גיל '+req.custAge:''}${req.beardPreference?' · '+(req.beardPreference==='with'?'עם זקן':'בלי זקן'):''}</div>
+    ${statusLine}${actions}
+  </div>`;
+}
+
+/* ---------- Swipe-to-toggle availability slider ---------- */
+let swipeDragging = false, swipeStartClientX = 0, swipeStartLeft = 0;
+function positionSwipeThumb(isOnline){
+  const track = document.getElementById('swipeTrack');
+  const thumb = document.getElementById('swipeThumb');
+  if(!track || !thumb) return;
+  const trackW = track.offsetWidth, thumbW = thumb.offsetWidth;
+  thumb.style.left = (isOnline ? (trackW - thumbW - 3) : 3) + 'px';
+}
+function initSwipeToggle(){
+  const track = document.getElementById('swipeTrack');
+  const thumb = document.getElementById('swipeThumb');
+  if(!track || !thumb) return;
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  positionSwipeThumb(!!(barbersCache[barberId]||{}).isOnline);
+  thumb.onpointerdown = (e) => {
+    swipeDragging = true;
+    thumb.setPointerCapture(e.pointerId);
+    swipeStartClientX = e.clientX;
+    swipeStartLeft = thumb.offsetLeft;
+    thumb.style.transition = 'none';
+  };
+  thumb.onpointermove = (e) => {
+    if(!swipeDragging) return;
+    const trackW = track.offsetWidth, thumbW = thumb.offsetWidth;
+    let left = swipeStartLeft + (e.clientX - swipeStartClientX);
+    left = Math.max(3, Math.min(trackW - thumbW - 3, left));
+    thumb.style.left = left + 'px';
+  };
+  const onUp = () => {
+    if(!swipeDragging) return;
+    swipeDragging = false;
+    thumb.style.transition = '';
+    const trackW = track.offsetWidth, thumbW = thumb.offsetWidth;
+    const pct = (thumb.offsetLeft - 3) / (trackW - thumbW - 6);
+    const bId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+    const isOnline = !!(barbersCache[bId]||{}).isOnline;
+    const wantOnline = pct > 0.5;
+    if(wantOnline !== isOnline){
+      toggleOnline(bId);
+    } else {
+      positionSwipeThumb(isOnline);
+    }
+  };
+  thumb.onpointerup = onUp;
+  thumb.onpointercancel = onUp;
+}
+
+function nowSec(){ return Math.floor(Date.now()/1000); }
+function fmt(sec){
+  if(sec<0) sec=0;
+  const m = Math.floor(sec/60).toString().padStart(2,'0');
+  const s = Math.floor(sec%60).toString().padStart(2,'0');
+  return m+':'+s;
+}
+
+/* ---------- Circular ring helper (countdown + earnings goal) ---------- */
+const RING_SIZE = 150, RING_STROKE = 10, RING_R = (RING_SIZE-RING_STROKE)/2, RING_C = 2*Math.PI*RING_R;
+function ringSVG(pctOrRemaining, total, label, opts){
+  opts = opts || {};
+  const pct = Math.max(0, Math.min(1, pctOrRemaining/total));
+  const offset = RING_C * (1-pct);
+  const urgent = !opts.money && pctOrRemaining < 60;
+  const cls = opts.money ? 'ring-fg money' : ('ring-fg'+(urgent?' urgent':''));
+  const centerNum = opts.money ? opts.centerText : fmt(pctOrRemaining);
+  return `<div class="ring-wrap">
+    <svg viewBox="0 0 ${RING_SIZE} ${RING_SIZE}">
+      ${opts.money ? `<defs><linearGradient id="moneyGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7b2d3f"/><stop offset="100%" stop-color="#9c3f52"/></linearGradient></defs>` : ''}
+      <circle class="ring-bg" cx="${RING_SIZE/2}" cy="${RING_SIZE/2}" r="${RING_R}" stroke-width="${RING_STROKE}" fill="none"/>
+      <circle id="${opts.id||'cdRing'}" class="${cls}" cx="${RING_SIZE/2}" cy="${RING_SIZE/2}" r="${RING_R}" stroke-width="${RING_STROKE}" fill="none" stroke-dasharray="${RING_C}" stroke-dashoffset="${offset}"/>
+    </svg>
+    <div class="ring-center"><div class="num">${centerNum}</div><div class="lbl">${label}</div></div>
+  </div>`;
+}
+function updateRing(remaining, total){
+  const ring = document.getElementById('cdRing');
+  const centerNum = document.querySelector('#cdRing').closest('.ring-wrap')?.querySelector('.num');
+  if(!ring) return;
+  const pct = Math.max(0, Math.min(1, remaining/total));
+  ring.style.strokeDashoffset = RING_C * (1-pct);
+  ring.classList.toggle('urgent', remaining < 60);
+  if(centerNum) centerNum.textContent = fmt(remaining);
+}
+
+/* ---------- Live tracking helpers (mirrors customer.html) ---------- */
+function metersBetween(a,b){
+  const R=6371000;
+  const dLat=(b.lat-a.lat)*Math.PI/180;
+  const dLng=(b.lng-a.lng)*Math.PI/180;
+  const la1=a.lat*Math.PI/180, la2=b.lat*Math.PI/180;
+  const h = Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function computeEnRouteKm(me, accepted){
+  const total = ARRIVAL_WINDOW_SEC;
+  const elapsed = nowSec() - accepted.acceptedAt;
+  const t = Math.max(0, Math.min(1, elapsed/total));
+  const start = {lat:me.lat, lng:me.lng};
+  const end = DEFAULT_CUSTOMER_POS;
+  const lat = start.lat + (end.lat-start.lat)*t;
+  const lng = start.lng + (end.lng-start.lng)*t;
+  return (metersBetween({lat,lng}, end)/1000).toFixed(1);
+}
+function updateEnRouteLabel(remainKm, etaMin){
+  const elKm = document.getElementById('enRouteKm');
+  const elEta = document.getElementById('enRouteEta');
+  if(elKm) elKm.textContent = remainKm;
+  if(elEta) elEta.textContent = etaMin;
+}
+
+/* ---------- Live chat (mirrors customer.html) ---------- */
+function getChatArr(){ return Object.entries(chatMessagesCache).map(([id,m])=>({id, ...m})).sort((a,b)=>a.ts-b.ts); }
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function attachChatListener(reqId){
+  if(chatListenerReqId === reqId) return;
+  if(chatListenerReqId){ db.ref('requests/'+chatListenerReqId+'/messages').off(); }
+  chatListenerReqId = reqId;
+  chatMessagesCache = {};
+  db.ref('requests/'+reqId+'/messages').on('value', snap=>{
+    chatMessagesCache = snap.val() || {};
+    render();
+    scrollChatToBottom();
+  });
+}
+function detachChatListener(){
+  if(chatListenerReqId){ db.ref('requests/'+chatListenerReqId+'/messages').off(); chatListenerReqId = null; }
+  chatMessagesCache = {};
+}
+function openChat(reqId){
+  chatOpen = true;
+  attachChatListener(reqId);
+  chatLastSeenTs = nowSec();
+  render();
+  scrollChatToBottom();
+}
+function closeChat(){
+  chatOpen = false;
+  chatLastSeenTs = nowSec();
+  render();
+}
+function sendChatMessage(reqId){
+  const input = document.getElementById('chatInput');
+  if(!input) return;
+  const text = input.value.trim();
+  if(!text) return;
+  db.ref('requests/'+reqId+'/messages').push({sender:'barber', text, ts:nowSec()});
+  input.value = '';
+  input.focus();
+}
+function scrollChatToBottom(){
+  setTimeout(()=>{
+    const log = document.getElementById('chatLog');
+    if(log) log.scrollTop = log.scrollHeight;
+  }, 30);
+}
+function renderChatModal(reqId){
+  if(!chatOpen || !reqId) return '';
+  const msgs = getChatArr();
+  return `<div class="modal-overlay" onclick="if(event.target===this) closeChat()">
+    <div class="modal-sheet">
+      <div class="modal-close" onclick="closeChat()">${ICONS.close}</div>
+      <h3>צ'אט עם הלקוח</h3>
+      <p class="sub">שיחה בזמן אמת — לתאם כתובת מדויקת או פרטים אחרונים.</p>
+      <div class="chat-log" id="chatLog">
+        ${msgs.length ? msgs.map(m=>`<div class="chat-msg ${m.sender==='barber'?'me':'them'}">${escapeHtml(m.text)}</div>`).join('') : `<div class="chat-empty">עדיין אין הודעות — תגידו שלום</div>`}
+      </div>
+      <div class="chat-input-row">
+        <input id="chatInput" type="text" placeholder="כתבו הודעה…" onkeydown="if(event.key==='Enter') sendChatMessage('${reqId}')">
+        <button class="btn btn-primary" onclick="sendChatMessage('${reqId}')">${ICONS.send}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- Firebase-backed data cache ---------- */
+let barbersCache = {};
+let requestsCache = {};
+let firebaseReady = false;
+
+const BARBER_PHONE_DEFAULTS = { b1:'050-1234567', b2:'052-2345678', b3:'054-3456789' };
+function seedIfEmpty(){
+  db.ref('barbers').once('value').then(snap=>{
+    if(!snap.exists()){
+      db.ref('barbers').set({
+        b1: {name:'מוטי כהן', price:60, rating:4.8, reviews:132, distanceKm:0.6, address:'הרצל 5, תל אביב', isOnline:true, lat:32.0664, lng:34.7647, earningsToday:0, specialties:['פייד קלאסי','זקן מעוצב'], phone:BARBER_PHONE_DEFAULTS.b1},
+        b2: {name:'דוד לוי', price:50, rating:4.6, reviews:81, distanceKm:1.1, address:'אבן גבירול 40, תל אביב', isOnline:true, lat:32.0776, lng:34.7818, earningsToday:0, specialties:['קלאסי משופשף','קרופ צרפתי'], phone:BARBER_PHONE_DEFAULTS.b2},
+        b3: {name:'שי אזולאי', price:75, rating:4.9, reviews:210, distanceKm:1.8, address:'דיזנגוף 120, תל אביב', isOnline:false, lat:32.0791, lng:34.7741, earningsToday:0, specialties:['פייד קלאסי','קרופ צרפתי'], phone:BARBER_PHONE_DEFAULTS.b3},
+      });
+    } else {
+      const data = snap.val();
+      Object.keys(BARBER_PHONE_DEFAULTS).forEach(id=>{
+        if(data[id] && !data[id].phone){
+          db.ref('barbers/'+id+'/phone').set(BARBER_PHONE_DEFAULTS[id]);
+        }
+      });
+    }
+  });
+}
+
+db.ref('.info/connected').on('value', snap=>{
+  const tag = document.getElementById('connTag');
+  if(!tag) return;
+  if(snap.val()===true){ tag.innerHTML='<span class="dot"></span>מחובר בזמן אמת'; tag.className='conn-tag live'; }
+  else { tag.innerHTML='<span class="dot"></span>מתחבר…'; tag.className='conn-tag offline'; }
+});
+
+db.ref('barbers').on('value', snap=>{
+  barbersCache = snap.val() || {};
+  firebaseReady = true;
+  render();
+});
+db.ref('requests').on('value', snap=>{
+  requestsCache = snap.val() || {};
+  render();
+});
+seedIfEmpty();
+
+function getBarbersArr(){ return Object.entries(barbersCache).map(([id,b])=>({id, ...b})); }
+function getRequestsArr(){ return Object.entries(requestsCache).map(([id,r])=>({id, ...r})); }
+
+function loadLocal(key, fallback){ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+function saveLocal(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+if(!loadLocal(LOCAL_KEYS.MY_BARBER, null)) saveLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+
+function setMyBarber(id){
+  saveLocal(LOCAL_KEYS.MY_BARBER, id);
+  render();
+}
+
+/* ---------- Barber logic (broadcast model, Firebase-backed) ---------- */
+function toggleOnline(barberId){
+  const b = barbersCache[barberId];
+  db.ref('barbers/'+barberId).update({ isOnline: !(b && b.isOnline) });
+}
+function myPendingRequest(barberId){
+  // A request's targetBarberIds is a snapshot taken when the customer searched (whoever
+  // was online at that moment) — it doesn't get re-filtered if the barber goes offline
+  // afterward. Don't surface it as an incoming request while offline; it should only
+  // appear once the barber actively swipes to become available again.
+  const me = barbersCache[barberId];
+  if(!me || !me.isOnline) return null;
+  return getRequestsArr().find(r => r.status==='pending' && (r.targetBarberIds||[]).includes(barberId) && !(r.declinedBy||[]).includes(barberId) && !(r.confirmedBarberIds||{})[barberId] && !(r.dismissedBarberIds||{})[barberId]) || null;
+}
+function myConfirmedRequest(barberId){
+  return getRequestsArr().find(r => r.status==='pending' && (r.confirmedBarberIds||{})[barberId] && !(r.dismissedBarberIds||{})[barberId]) || null;
+}
+function myAcceptedRequest(barberId){
+  return getRequestsArr().find(r => r.status==='accepted' && r.acceptedBarberId===barberId) || null;
+}
+function acceptRequest(reqId, barberId){
+  // Confirming no longer locks the request to this barber — the customer may see several
+  // confirmed barbers and picks one (see chooseBarber() in customer.html). Writing only our
+  // own key avoids a race with other barbers confirming the same request at the same time.
+  // Value is a timestamp (not just `true`) so the customer's list can show barbers in confirm order.
+  db.ref('requests/'+reqId+'/confirmedBarberIds/'+barberId).set(nowSec());
+}
+function declineRequest(reqId, barberId){
+  const req = requestsCache[reqId];
+  const declinedBy = (req && req.declinedBy) || [];
+  db.ref('requests/'+reqId).update({ declinedBy:[...declinedBy, barberId] });
+}
+function completeVisit(reqId, barberId, arrived){
+  const req = requestsCache[reqId] || {};
+  const urgentBonus = req.urgent ? SOS_SURCHARGE : 0;
+  db.ref('requests/'+reqId).update({ status: arrived ? 'completed' : 'no_show' });
+  const b = barbersCache[barberId];
+  if(b){
+    // No-show now bills the customer full price too (same payout formula as a completed visit) — platform still takes its 10% either way.
+    const add = Math.round(b.price*(1-COMMISSION_RATE)) + urgentBonus;
+    db.ref('barbers/'+barberId).update({ earningsToday: (b.earningsToday||0) + add });
+  }
+}
+
+function renderSimSelect(){
+  const el = document.getElementById('simSelect');
+  if(!el) return; // lives inside the account drawer now — not in the DOM unless it's open
+  const barbers = getBarbersArr();
+  const myId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  el.innerHTML = barbers.map(b=>
+    `<option value="${b.id}" ${b.id===myId?'selected':''}>מדמה את: ${b.name}</option>`
+  ).join('');
+}
+
+/* ---------- Rendering (structural render vs. lightweight tick) ---------- */
+let lastSignature = '';
+
+function computeSignature(){
+  if(!isLoggedIn()) return 'login:'+loginStep+':'+loginGeneratedCode+':'+loginPhoneError+':'+loginCodeError+':'+emailCodeError;
+  if(!firebaseReady) return 'loading';
+  if(editingProfile || !isProfileDone()) return 'profile:'+loadLocal(LOCAL_KEYS.MY_BARBER,'b1')+':'+editingProfile;
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = getBarbersArr().find(x=>x.id===barberId);
+  if(!me) return 'nome';
+  const accepted = myAcceptedRequest(me.id);
+  const pending = myPendingRequest(me.id);
+  const confirmed = myConfirmedRequest(me.id);
+  return `${barberId}:${me.isOnline}:${me.earningsToday}:${accepted?('a:'+accepted.id):''}:${pending?('p:'+pending.id):''}:${confirmed?('c:'+confirmed.id):''}`;
+}
+
+function renderSkeleton(){
+  return `<div class="card">
+    <div class="skeleton sk-line" style="width:50%"></div>
+    <div class="skeleton sk-line" style="width:70%"></div>
+  </div>`;
+}
+
+function render(){
+  const sig = computeSignature();
+  if(!isLoggedIn()){
+    // Gate on the signature (login step + error/code state) same as the dashboard below —
+    // otherwise every 1s tick recreated the login screen from scratch and replayed its
+    // entrance animation, which looked like the screen flashing away and back.
+    if(sig !== lastSignature){
+      lastSignature = sig;
+      document.getElementById('dynamicArea').innerHTML = renderLogin();
+    }
+    return;
+  }
+  if(!firebaseReady){
+    if(sig !== lastSignature){
+      lastSignature = sig;
+      document.getElementById('dynamicArea').innerHTML = renderSkeleton();
+    }
+    return;
+  }
+  if(editingProfile || !isProfileDone()){
+    if(sig !== lastSignature){
+      lastSignature = sig;
+      document.getElementById('dynamicArea').innerHTML = renderProfileSetup();
+      renderGalleryRow();
+    }
+    return;
+  }
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = getBarbersArr().find(x=>x.id===barberId);
+  const myAccepted = me ? myAcceptedRequest(me.id) : null;
+  if(myAccepted){
+    attachChatListener(myAccepted.id);
+  } else {
+    detachChatListener();
+    chatOpen = false;
+  }
+  const modalArea = document.getElementById('modalArea');
+  if(modalArea) modalArea.innerHTML = renderChatModal(myAccepted ? myAccepted.id : null) + renderMenuModal();
+  renderSimSelect();
+  // Only rebuild the dashboard HTML when something relevant to *this* barber actually
+  // changed — barbers/requests Firebase listeners fire on every change anywhere (even
+  // unrelated barbers), and re-creating the cards every time replayed their pop-in
+  // animation, which read as random jumping in the UI.
+  if(sig !== lastSignature){
+    lastSignature = sig;
+    document.getElementById('dynamicArea').innerHTML = renderBarber();
+    ensureBarberMap();
+    initSwipeToggle();
+  }
+  if(myAccepted && me){
+    const remainKm = computeEnRouteKm(me, myAccepted);
+    const leftSec = ARRIVAL_WINDOW_SEC-(nowSec()-myAccepted.acceptedAt);
+    updateEnRouteLabel(remainKm, Math.max(0,Math.ceil(leftSec/60)));
+  }
+  if(chatOpen) scrollChatToBottom();
+}
+
+function tick(){
+  const sig = computeSignature();
+  if(sig !== lastSignature){ render(); return; }
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const me = getBarbersArr().find(x=>x.id===barberId);
+  if(!me) return;
+  const accepted = myAcceptedRequest(me.id);
+  const pending = myPendingRequest(me.id);
+  const confirmed = myConfirmedRequest(me.id);
+  if(accepted){
+    updateRing(ARRIVAL_WINDOW_SEC-(nowSec()-accepted.acceptedAt), ARRIVAL_WINDOW_SEC);
+    const remainKm = computeEnRouteKm(me, accepted);
+    const leftSec = ARRIVAL_WINDOW_SEC-(nowSec()-accepted.acceptedAt);
+    updateEnRouteLabel(remainKm, Math.max(0,Math.ceil(leftSec/60)));
+  } else if(pending){
+    updateRing(CONFIRM_WINDOW_SEC-(nowSec()-pending.createdAt), CONFIRM_WINDOW_SEC);
+  } else if(confirmed){
+    updateRing(CONFIRM_WINDOW_SEC-(nowSec()-confirmed.createdAt), CONFIRM_WINDOW_SEC);
+  }
+}
+
+function renderBarber(){
+  const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
+  const barbers = getBarbersArr();
+  const me = barbers.find(x=>x.id===barberId);
+  if(!me) return `<div class="card empty">טוען…</div>`;
+  const myReq = myPendingRequest(me.id);
+  const myAccepted = myAcceptedRequest(me.id);
+  const myConfirmed = myConfirmedRequest(me.id);
+
+  const beardBadge = (r) => r.beardPreference ? `<span class="style-badge">${r.beardPreference==='with'?'🧔 עם זקן':'🚫 בלי זקן'}</span>` : '';
+
+  let sheet = '';
+  if(myAccepted){
+    const left = ARRIVAL_WINDOW_SEC - (nowSec()-myAccepted.acceptedAt);
+    const urgentBonus = myAccepted.urgent ? SOS_SURCHARGE : 0;
+    const chatMsgs = getChatArr();
+    const chatUnread = !chatOpen ? chatMsgs.filter(m=>m.sender==='customer' && m.ts > chatLastSeenTs).length : 0;
+    sheet = `
+      <div class="status-pill"><span class="dot"></span> ממתין להגעת הלקוח</div>
+      <div class="enroute-pill">${ICONS.nav} מרחק ללקוח — <b id="enRouteKm">…</b> ק"מ · כ-<b id="enRouteEta">…</b> דק'</div>
+      ${(myAccepted.urgent || myAccepted.stylePreference || myAccepted.custAge || myAccepted.beardPreference) ? `<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;justify-content:center">
+        ${myAccepted.urgent?`<span class="urgent-badge">${ICONS.bolt} SOS עדיפות (+₪${SOS_SURCHARGE})</span>`:''}
+        ${myAccepted.stylePreference?`<span class="style-badge">${ICONS.wand} ${(STYLE_OPTIONS.find(s=>s.id===myAccepted.stylePreference)||{}).label||''}</span>`:''}
+        ${myAccepted.custAge?`<span class="style-badge">גיל ${myAccepted.custAge}</span>`:''}
+        ${beardBadge(myAccepted)}
+      </div>` : ''}
+      ${ringSVG(left, ARRIVAL_WINDOW_SEC, 'זמן שנותר להגעה')}
+      <div class="meta" style="text-align:center;margin-bottom:4px">₪${me.price}${urgentBonus?` + ₪${urgentBonus} עדיפות`:''} (10% עמלת פלטפורמה על הבסיס)</div>
+      <div class="divider"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" style="flex:1" onclick="completeVisit('${myAccepted.id}','${me.id}', true)">${ICONS.check} הלקוח הגיע</button>
+        <button class="btn btn-outline" style="flex:1" onclick="completeVisit('${myAccepted.id}','${me.id}', false)">לא הגיע ${left<=0?'(זמין)':''}</button>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        ${myAccepted.custPhone ? `<a class="btn btn-outline" style="flex:1;text-align:center" href="tel:${myAccepted.custPhone}">${ICONS.phone} התקשר</a>` : ''}
+        <button class="btn btn-outline" style="flex:1;position:relative" onclick="openChat('${myAccepted.id}')">${ICONS.chat} צ'אט${chatUnread>0?` <span class="chat-badge">${chatUnread}</span>`:''}</button>
+      </div>`;
+  } else if(myConfirmed){
+    const left = CONFIRM_WINDOW_SEC - (nowSec()-myConfirmed.createdAt);
+    const confirmedCount = Object.keys(myConfirmed.confirmedBarberIds||{}).length;
+    sheet = `
+      <div class="status-pill"><span class="dot accent-dot"></span> אישרת — ממתין לבחירת הלקוח</div>
+      ${(myConfirmed.stylePreference || myConfirmed.custAge || myConfirmed.beardPreference) ? `<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;justify-content:center">
+        ${myConfirmed.stylePreference?`<span class="style-badge">${ICONS.wand} ${(STYLE_OPTIONS.find(s=>s.id===myConfirmed.stylePreference)||{}).label||''}</span>`:''}
+        ${myConfirmed.custAge?`<span class="style-badge">גיל ${myConfirmed.custAge}</span>`:''}
+        ${beardBadge(myConfirmed)}
+      </div>` : ''}
+      ${ringSVG(left, CONFIRM_WINDOW_SEC, `הלקוח בוחר מבין ${confirmedCount} ספרים שאישרו`)}
+      <div class="meta" style="text-align:center;margin-bottom:4px">לקוח מבקש/ת תספורת · ₪${me.price}${myConfirmed.urgent?` + ₪${SOS_SURCHARGE} עדיפות`:''}</div>
+      <div class="note">אם הלקוח יבחר ספר אחר, הבקשה תיעלם מכאן לבד.</div>`;
+  } else if(myReq){
+    const left = CONFIRM_WINDOW_SEC - (nowSec()-myReq.createdAt);
+    sheet = `
+      <div class="status-pill"><span class="dot accent-dot"></span> בקשה נכנסת (נשלחה ל-${(myReq.targetBarberIds||[]).length} ספרים)</div>
+      ${(myReq.urgent || myReq.stylePreference || myReq.custAge || myReq.beardPreference) ? `<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+        ${myReq.urgent?`<span class="urgent-badge">${ICONS.bolt} SOS דחוף — כדאי לאשר מהר</span>`:''}
+        ${myReq.stylePreference?`<span class="style-badge">${ICONS.wand} ${(STYLE_OPTIONS.find(s=>s.id===myReq.stylePreference)||{}).label||''}</span>`:''}
+        ${myReq.custAge?`<span class="style-badge">גיל ${myReq.custAge}</span>`:''}
+        ${beardBadge(myReq)}
+      </div>` : ''}
+      ${ringSVG(left, CONFIRM_WINDOW_SEC, 'הלקוח בוחר מבין הספרים שמאשרים')}
+      <div class="meta" style="text-align:center;margin-bottom:4px">לקוח מבקש/ת תספורת · ₪${me.price}${myReq.urgent?` + ₪${SOS_SURCHARGE} עדיפות`:''}</div>
+      <div class="divider"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-green" style="flex:1" onclick="acceptRequest('${myReq.id}','${me.id}')">${ICONS.check} אשר</button>
+        <button class="btn btn-red" style="flex:1" onclick="declineRequest('${myReq.id}','${me.id}')">דחה</button>
+      </div>`;
+  }
+
+  const out = `<div class="bmap-wrap">
+      <div id="bmap"></div>
+      <div class="bmap-scrim"></div>
+      ${sheet ? `<div class="bmap-sheet ${myReq&&myReq.urgent?'urgent':''}">${sheet}</div>` : `
+      <div class="swipe-track ${me.isOnline?'is-online':''}" id="swipeTrack">
+        <span class="swipe-label">${me.isOnline?'זמין — החלק/י כדי לצאת':'החלק/י כדי להיות זמין'}</span>
+        <div class="swipe-thumb" id="swipeThumb"></div>
+      </div>`}
+    </div>
+    <div class="note">כדי לדמות בקשה מלקוח: פתח <a href="customer.html" target="_blank">customer.html</a> (בכל מכשיר) ולחץ "חפש ספר עכשיו".</div>`;
+
+  return out;
+}
+
+/* ticking timers (data itself is pushed live by Firebase listeners above) */
+setInterval(tick, 1000);
+render();
+</script>
+<!-- Google Maps — loaded last (async), after onGMapsLoaded above is already defined, so its callback can never fire before the function exists -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8MwqXsWe3TU-bF6S6RVOKnoRU7c2sM4U&callback=onGMapsLoaded" async defer></script>
+</body>
+</html>
