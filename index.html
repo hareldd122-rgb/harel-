@@ -67,6 +67,7 @@
   .barber-info .meta{font-size:12.5px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
   .barber-info .meta b{color:var(--accent-dark);}
   .btn{border:none;border-radius:var(--radius-sm);padding:11px 16px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .12s var(--ease-spring), box-shadow .2s var(--ease), background .2s var(--ease), opacity .2s;}
+  .btn svg{width:16px;height:16px;flex-shrink:0;}
   .btn:active{transform:scale(.96);}
   .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 16px -4px rgba(123,45,63,.45);}
   .btn-primary:hover{filter:brightness(1.06);}
@@ -233,6 +234,7 @@
   .drawer-row:last-child{border-bottom:none;}
   .drawer-row svg{width:18px;height:18px;color:var(--accent-dark);flex-shrink:0;}
   .drawer-row .chev{margin-inline-start:auto;color:var(--muted2);width:14px;height:14px;}
+  .drawer-row .chev svg{width:14px;height:14px;}
   .drawer-row-value{font-size:12px;color:var(--muted);font-weight:600;direction:ltr;}
   .menu-logout{color:var(--red);font-size:12.5px;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;padding:20px 0 0;width:100%;text-align:center;}
 
@@ -480,14 +482,25 @@ db.ref('.info/connected').on('value', snap=>{
   else { tag.innerHTML='<span class="dot"></span>מתחבר…'; tag.className='conn-tag offline'; }
 });
 
+function renderIfChanged(){
+  // These two listeners fire on ANY barbers/requests change anywhere in the shared DB —
+  // another customer starting a search, any barber toggling online, etc. — not just this
+  // device's own data. Rebuilding on every such event wiped whatever the customer had
+  // mid-typing in any open form (signup, card, rating, chat). Only rebuild when something
+  // this signature actually cares about changed; genuinely-relevant updates (this
+  // customer's own active request, barber list on the idle screen) still come through fine
+  // since they're part of computeSignature() itself.
+  const sig = computeSignature();
+  if(sig !== lastSignature) render();
+}
 db.ref('barbers').on('value', snap=>{
   barbersCache = snap.val() || {};
   firebaseReady = true;
-  render();
+  renderIfChanged();
 });
 db.ref('requests').on('value', snap=>{
   requestsCache = snap.val() || {};
-  render();
+  renderIfChanged();
 });
 seedIfEmpty();
 
@@ -599,15 +612,23 @@ function toggleFaceIdNote(){
   faceIdNoteShown = !faceIdNoteShown;
   render();
 }
+function showSignupError(msg){
+  // Updates the error message in place instead of calling render() — a full re-render
+  // would rebuild the signup form from scratch and wipe whatever was typed into the OTHER
+  // fields, since they're plain uncontrolled inputs with no state backing them until submit.
+  signupError = msg;
+  const el = document.getElementById('signupErrorMsg');
+  if(el){ el.textContent = msg; el.style.display = msg ? '' : 'none'; }
+}
 function submitSignup(){
   const first = document.getElementById('signupFirstNameInput').value.trim();
   const last = document.getElementById('signupLastNameInput').value.trim();
   const email = document.getElementById('signupEmailInput').value.trim();
   const birthdate = document.getElementById('signupBirthdateInput').value.trim();
-  if(!first || !last){ signupError = 'נא להזין שם פרטי ושם משפחה'; render(); return; }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ signupError = 'כתובת אימייל לא תקינה'; render(); return; }
+  if(!first || !last){ showSignupError('נא להזין שם פרטי ושם משפחה'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showSignupError('כתובת אימייל לא תקינה'); return; }
   const age = ageFromBirthdate(birthdate);
-  if(!birthdate || age===null || age<1 || age>120){ signupError = 'נא להזין תאריך לידה תקין'; render(); return; }
+  if(!birthdate || age===null || age<1 || age>120){ showSignupError('נא להזין תאריך לידה תקין'); return; }
   signupError = '';
   pendingSignup = { first, last, email, birthdate };
   loginGeneratedCode = genCode();
@@ -677,7 +698,7 @@ function renderLogin(){
         <input id="signupLastNameInput" class="login-input" style="text-align:right;font-weight:500;letter-spacing:normal;direction:rtl" type="text" placeholder="שם משפחה">
         <input id="signupEmailInput" class="login-input" style="text-align:right;font-weight:500;letter-spacing:normal;direction:ltr" type="email" placeholder="אימייל">
         <input id="signupBirthdateInput" class="login-input" style="text-align:right;font-weight:500;letter-spacing:normal;direction:ltr" type="date" placeholder="תאריך לידה">
-        ${signupError?`<div class="login-error">${signupError}</div>`:''}
+        <div class="login-error" id="signupErrorMsg" style="${signupError?'':'display:none'}">${signupError}</div>
         <button class="faceid-btn" onclick="toggleFaceIdNote()">${ICONS.faceId} ${faceIdNoteShown?'זיהוי פנים הופעל ✓':'הפעלת זיהוי פנים'}</button>
         ${faceIdNoteShown?'<div class="faceid-note">זיהוי פנים אמיתי (Face ID) יופעל בגרסת האפליקציה הנייטיב לאנדרואיד/iOS — כאן זו רק תצוגה.</div>':''}
         <button class="btn btn-primary btn-block" onclick="submitSignup()">יצירת חשבון</button>
@@ -848,15 +869,22 @@ function formatCardExpiryInput(input){
   const digits = input.value.replace(/\D/g,'').slice(0,4);
   input.value = digits.length>2 ? digits.slice(0,2)+'/'+digits.slice(2) : digits;
 }
+function showCardFormError(msg){
+  // Same reasoning as showSignupError(): update in place, don't call render() and wipe
+  // whatever the customer already typed into the other card fields.
+  cardFormError = msg;
+  const el = document.getElementById('cardFormErrorMsg');
+  if(el){ el.textContent = msg; el.style.display = msg ? '' : 'none'; }
+}
 function submitCardForm(){
   const digits = (document.getElementById('cardNumberInput').value||'').replace(/\D/g,'');
   const exp = (document.getElementById('cardExpiryInput').value||'').trim();
   const cvv = (document.getElementById('cardCvvInput').value||'').replace(/\D/g,'');
   const name = (document.getElementById('cardNameInput').value||'').trim();
-  if(digits.length<13 || digits.length>19){ cardFormError='מספר כרטיס לא תקין'; render(); return; }
-  if(!/^\d{2}\/\d{2}$/.test(exp)){ cardFormError='תוקף לא תקין (MM/YY)'; render(); return; }
-  if(cvv.length<3 || cvv.length>4){ cardFormError='קוד CVV לא תקין'; render(); return; }
-  if(!name){ cardFormError='נא להזין את שם בעל/ת הכרטיס'; render(); return; }
+  if(digits.length<13 || digits.length>19){ showCardFormError('מספר כרטיס לא תקין'); return; }
+  if(!/^\d{2}\/\d{2}$/.test(exp)){ showCardFormError('תוקף לא תקין (MM/YY)'); return; }
+  if(cvv.length<3 || cvv.length>4){ showCardFormError('קוד CVV לא תקין'); return; }
+  if(!name){ showCardFormError('נא להזין את שם בעל/ת הכרטיס'); return; }
   const cards = getSavedCards();
   cards.push({ last4: digits.slice(-4), brand: cardBrandGuess(digits[0]), expiry: exp, name });
   localStorage.setItem(LOCAL_KEYS.CARD_INFO, JSON.stringify(cards));
@@ -956,7 +984,7 @@ function renderCardFormModal(){
       </div>
       <div class="field-label">שם בעל/ת הכרטיס</div>
       <input id="cardNameInput" class="login-input" style="text-align:right;font-weight:500;letter-spacing:normal;direction:rtl" type="text" placeholder="כפי שמופיע על הכרטיס">
-      ${cardFormError ? `<div class="login-error">${cardFormError}</div>` : ''}
+      <div class="login-error" id="cardFormErrorMsg" style="${cardFormError?'':'display:none'}">${cardFormError}</div>
       <div class="card-security-note">${ICONS.shield}<span>לא שומרים את קוד ה-CVV — רק את 4 הספרות האחרונות של הכרטיס, לצורך תצוגה בלבד.</span></div>
       <button class="btn btn-primary btn-block" onclick="submitCardForm()">שמירת כרטיס</button>
     </div>
@@ -988,6 +1016,7 @@ function startSearch(){
   chosenStyle = null;
   beardPreference = null;
   reviewsOpen = false;
+  openBarberDetailsId = null;
 }
 function cancelRequest(reqId){
   db.ref('requests/'+reqId).update({status:'cancelled'});
@@ -1618,7 +1647,7 @@ function renderCustomer(active){
             ${active.stylePreference?`<span class="style-badge">${ICONS.wand} ${(STYLE_OPTIONS.find(s=>s.id===active.stylePreference)||{}).label||''}</span>`:''}
             ${active.beardPreference?`<span class="style-badge">${active.beardPreference==='with'?'🧔 עם זקן':'🚫 בלי זקן'}</span>`:''}
           </div>` : ''}
-          <div class="row"><div class="barber-info"><div class="name">${b.name}</div><div class="meta">${b.address} · ₪${b.price}</div></div></div>
+          <div class="row"><div class="barber-info"><div class="name">${b.name}</div><div class="meta">${b.address?b.address+' · ':''}₪${b.price}</div></div></div>
           <div class="divider"></div>
           <div style="display:flex;gap:10px">
             <a class="btn btn-primary" style="flex:1;text-align:center" href="https://waze.com" target="_blank" rel="noopener">${ICONS.nav} ניווט בוויז</a>

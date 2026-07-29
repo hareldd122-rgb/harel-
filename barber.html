@@ -157,7 +157,8 @@
   .profile-photo-row{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
   .profile-photo-circle{width:72px;height:72px;border-radius:50%;background:var(--panel2) center/cover no-repeat;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted2);flex-shrink:0;}
   .profile-photo-circle svg{width:28px;height:28px;}
-  .photo-upload-btn{background:var(--panel2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 14px;font-family:inherit;font-weight:700;font-size:12.5px;color:var(--text);cursor:pointer;}
+  .photo-upload-btn{background:var(--panel2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 14px;font-family:inherit;font-weight:700;font-size:12.5px;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .photo-upload-btn svg{width:15px;height:15px;flex-shrink:0;}
   .spec-chips{display:flex;flex-wrap:wrap;gap:7px;}
   .spec-chip{border:1.5px solid var(--border);background:var(--panel);border-radius:999px;padding:7px 13px;font-family:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s var(--ease);}
   .spec-chip.active{border-color:var(--accent);color:var(--accent-dark);background:var(--accent-light);}
@@ -823,8 +824,8 @@ function ringSVG(pctOrRemaining, total, label, opts){
 }
 function updateRing(remaining, total){
   const ring = document.getElementById('cdRing');
-  const centerNum = document.querySelector('#cdRing').closest('.ring-wrap')?.querySelector('.num');
   if(!ring) return;
+  const centerNum = ring.closest('.ring-wrap')?.querySelector('.num');
   const pct = Math.max(0, Math.min(1, remaining/total));
   ring.style.strokeDashoffset = RING_C * (1-pct);
   ring.classList.toggle('urgent', remaining < 60);
@@ -990,6 +991,11 @@ function myPendingRequest(barberId){
   // appear once the barber actively swipes to become available again.
   const me = barbersCache[barberId];
   if(!me || !me.isOnline) return null;
+  // Already committed to a job (accepted) — don't surface a new incoming request as
+  // acceptable, whether in the bottom sheet or as a clickable map marker. Without this, a
+  // busy barber could tap a still-visible pending marker on the map and accept a second,
+  // overlapping job.
+  if(myAcceptedRequest(barberId)) return null;
   return getRequestsArr().find(r => r.status==='pending' && (r.targetBarberIds||[]).includes(barberId) && !(r.declinedBy||[]).includes(barberId) && !(r.confirmedBarberIds||{})[barberId] && !(r.dismissedBarberIds||{})[barberId]) || null;
 }
 function myConfirmedRequest(barberId){
@@ -1018,7 +1024,9 @@ function completeVisit(reqId, barberId, arrived){
   if(b){
     // No-show now bills the customer full price too (same payout formula as a completed visit) — platform still takes its 10% either way.
     const add = Math.round(b.price*(1-COMMISSION_RATE)) + urgentBonus;
-    db.ref('barbers/'+barberId).update({ earningsToday: (b.earningsToday||0) + add });
+    // Atomic server-side increment (not a local-cache read-modify-write) so two visits
+    // completing close together can't silently overwrite each other's payout.
+    db.ref('barbers/'+barberId).update({ earningsToday: firebase.database.ServerValue.increment(add) });
   }
 }
 
@@ -1074,14 +1082,6 @@ function render(){
     }
     return;
   }
-  if(editingProfile || !isProfileDone()){
-    if(sig !== lastSignature){
-      lastSignature = sig;
-      document.getElementById('dynamicArea').innerHTML = renderProfileSetup();
-      renderGalleryRow();
-    }
-    return;
-  }
   const barberId = loadLocal(LOCAL_KEYS.MY_BARBER, 'b1');
   const me = getBarbersArr().find(x=>x.id===barberId);
   const myAccepted = me ? myAcceptedRequest(me.id) : null;
@@ -1091,8 +1091,27 @@ function render(){
     detachChatListener();
     chatOpen = false;
   }
+  // Chat/menu modal is rebuilt here — above the editingProfile gate below — so an ongoing
+  // chat keeps receiving live messages even while the barber has the profile-edit screen open.
   const modalArea = document.getElementById('modalArea');
-  if(modalArea) modalArea.innerHTML = renderChatModal(myAccepted ? myAccepted.id : null) + renderMenuModal();
+  if(modalArea){
+    // Firebase 'value' listeners fire on ANY barber/request change anywhere, not just this
+    // barber's own chat — without this, a barber mid-typing a reply loses the draft every
+    // time render() runs for an unrelated reason.
+    const prevChatInput = document.getElementById('chatInput');
+    const chatDraft = prevChatInput ? prevChatInput.value : '';
+    modalArea.innerHTML = renderChatModal(myAccepted ? myAccepted.id : null) + renderMenuModal();
+    const newChatInput = document.getElementById('chatInput');
+    if(newChatInput && chatDraft) newChatInput.value = chatDraft;
+  }
+  if(editingProfile || !isProfileDone()){
+    if(sig !== lastSignature){
+      lastSignature = sig;
+      document.getElementById('dynamicArea').innerHTML = renderProfileSetup();
+      renderGalleryRow();
+    }
+    return;
+  }
   renderSimSelect();
   // Only rebuild the dashboard HTML when something relevant to *this* barber actually
   // changed — barbers/requests Firebase listeners fire on every change anywhere (even
