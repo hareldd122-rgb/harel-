@@ -993,10 +993,18 @@ function renderCardFormModal(){
 
 /* ---------- Customer logic (broadcast model, Firebase-backed) ---------- */
 function myActiveRequest(){
-  return getRequestsArr().find(r => ['pending','accepted'].includes(r.status)) || null;
+  // Must be scoped to THIS customer (by phone) — requests/ is one shared list for every
+  // customer using the app. Without the phone check, `find()` returns whichever
+  // pending/accepted request happens to be first in the whole database (e.g. an old request
+  // from a previous test session that was never cancelled/completed), so a customer could be
+  // stuck watching a stale, unrelated request forever while their own new request — and any
+  // barber confirmation on it — never shows up on their screen.
+  const myPhone = loggedInPhone();
+  return getRequestsArr().find(r => ['pending','accepted'].includes(r.status) && r.custPhone===myPhone) || null;
 }
 function myUnratedCompletedRequest(){
-  return getRequestsArr().find(r => r.status==='completed' && !r.rated) || null;
+  const myPhone = loggedInPhone();
+  return getRequestsArr().find(r => r.status==='completed' && !r.rated && r.custPhone===myPhone) || null;
 }
 function setBeardPreference(pref){
   beardPreference = pref;
@@ -1458,7 +1466,12 @@ function computeSignature(){
   if(!active){
     return 'idle:'+getBarbersArr().map(b=>`${b.id}${b.isOnline}${b.price}${b.rating}${b.distanceKm}`).join(',');
   }
-  return 'active:'+active.id+':'+active.status+':'+reviewsOpen;
+  // Must include confirmedBarberIds/dismissedBarberIds — otherwise a barber confirming (or
+  // being dismissed) doesn't change status, so the render-gating below would never notice
+  // and the customer's screen would silently never show the confirmation.
+  const confirmedKey = Object.keys(active.confirmedBarberIds||{}).join(',');
+  const dismissedKey = Object.keys(active.dismissedBarberIds||{}).join(',');
+  return 'active:'+active.id+':'+active.status+':'+reviewsOpen+':'+confirmedKey+':'+dismissedKey;
 }
 
 function ensureStaticArea(){
